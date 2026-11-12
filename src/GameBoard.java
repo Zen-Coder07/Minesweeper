@@ -86,11 +86,13 @@ public class GameBoard {
                     cell = grid[i][j];
 
                     if(cell.isMine()){
-                        System.out.print("* ");
+                        System.out.print("💣");
                     }else if(cell.getAroundMineCount()==0){
                         System.out.print("  ");
                     }else {
-                        System.out.print(cell.getAroundMineCount()+" ");
+                        int num = cell.getAroundMineCount();
+                        String Color = color.getColorByCount(num);
+                        System.out.print(Color + num + color.RESET + " ");
                     }
                 }
                 System.out.println();

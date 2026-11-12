@@ -5,8 +5,8 @@ public class MinesweeperMain {
         Scanner sc = new Scanner(System.in);
         GameUI ui = new GameUI();
         GameBoard board=new GameBoard(9,9,10);
-
         ui.printHelp();
+        long start=System.currentTimeMillis();
         while (!board.isGameOver()){
             ui.renderBoard(board);
             System.out.print("输入指令：");
@@ -40,6 +40,10 @@ public class MinesweeperMain {
                 break;
             }
         }
+        long end = System.currentTimeMillis();
+        double cost = (end - start) / 1000.0;
+        System.out.printf("本局耗时：%.2f 秒\n", cost);
+
         sc.close();
     }
 }

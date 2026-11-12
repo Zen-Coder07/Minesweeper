@@ -1,4 +1,5 @@
 public class GameUI {
+
     public void renderBoard(GameBoard board){
         Cell[][]grid = board.getGrid();
         int rows = board.rows;
@@ -16,14 +17,16 @@ public class GameUI {
                 Cell cell = grid[i][j];
                 if (cell.isRevealed()) {
                     if (cell.isMine()) {
-                        System.out.print("* ");
+                        System.out.print("💣");
                     } else if (cell.getAroundMineCount() == 0) {
                         System.out.print("  ");
                     } else {
-                        System.out.print(cell.getAroundMineCount() + " ");
+                        int num = cell.getAroundMineCount();
+                        String Color = color.getColorByCount(num);
+                        System.out.print(Color + num + color.RESET + " ");
                     }
                 } else if (cell.isFlagged()) {
-                    System.out.print("F ");
+                    System.out.print("🚩");
                 } else {
                     System.out.print("■ ");
                 }
@@ -31,6 +34,8 @@ public class GameUI {
             System.out.println();
         }
     }
+
+
     public void printHelp(){
         System.out.println("=====扫雷=====");
         System.out.println("指令：o 行 列 |翻开   f 行 列 |插旗");
