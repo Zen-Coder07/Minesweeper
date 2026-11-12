@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Scanner;
 
 public class GameBoard {
     Cell[][] grid;
@@ -74,13 +75,52 @@ public class GameBoard {
         }
         if(cell.isMine()){
             gameOver=true;
+            System.out.print("  ");
+            for(int j=1; j<=rows; j++){
+                System.out.print(j+" ");
+            }
+            System.out.println();
+            for(int i=0; i<rows; i++){
+                System.out.print((i+1)+" ");
+                for(int j=0; j<cols; j++){
+                    cell = grid[i][j];
+
+                    if(cell.isMine()){
+                        System.out.print("* ");
+                    }else if(cell.getAroundMineCount()==0){
+                        System.out.print("  ");
+                    }else {
+                        System.out.print(cell.getAroundMineCount()+" ");
+                    }
+                }
+                System.out.println();
+            }
             System.out.println("Bong! 踩雷了！游戏结束");
             return;
         }
-        if (cell.isRevealed()||cell.isFlagged()){
-            System.out.println("该格子无法被翻开");
+        if (cell.isRevealed()) {
+            System.out.println("该盒子不能被重复掀开");
             return;
         }
+        if(cell.isFlagged()){
+            Scanner sc = new Scanner(System.in);
+            while (true) {
+                System.out.println("当前格子为旗子，是否要掀开 yes/no");
+                String choice = sc.nextLine();
+                if(choice.equals("yes")){
+                    BFS(r,c,cell);
+                    break;
+                }else if(choice.equals("no")){
+                    break;
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+        BFS(r,c,cell);
+    }
+    protected void BFS(int r, int c,Cell cell){
         //BFS级联展开,用Queue
 
 //        假设点击一个0号格子：
@@ -140,7 +180,7 @@ public class GameBoard {
     }
     //检查是否胜利
     public boolean checkWin(){
-        return safeNum<=0;
+        return safeNum<0;
     }
     //是否输掉游戏
     public boolean isGameOver(){

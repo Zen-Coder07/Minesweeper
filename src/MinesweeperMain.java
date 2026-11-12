@@ -10,21 +10,36 @@ public class MinesweeperMain {
         while (!board.isGameOver()){
             ui.renderBoard(board);
             System.out.print("输入指令：");
-            String op=sc.nextLine();
-            int r=sc.nextInt()-1;
-            int c=sc.nextInt()-1;
-            if(op.equals("o")){
-                board.openCell(r,c);
-            }else if(op.equals("f")){
-                board.toggleFlag(r,c);
+            try {
+                String line = sc.nextLine();
+                String[] arr = line.split("\\s+");
+                if(arr.length==3) {
+                    String op = arr[0];
+                    int r = Integer.parseInt(arr[1]) - 1;
+                    int c = Integer.parseInt(arr[2]) - 1;
+                    if (op.equals("o") || op.equals("open")) {
+                        board.openCell(r, c);
+                    } else if (op.equals("f") || op.equals("flag")) {
+                        board.toggleFlag(r, c);
+                    }
+                    else{
+                        throw new Exception("请输入o/open或f/flag");
+                    }
+                }
+                else{
+                    throw new Exception("格式有误");
+                }
+            }catch (NumberFormatException e){
+                System.out.println("行列必须为数字！");
             }
-
+            catch (Exception e){
+                System.out.println(e.getMessage());
+            }
             if(board.checkWin()){
                 System.out.println("🎉🎉恭喜胜利！🎉🎉");
                 break;
             }
         }
-        ui.renderBoard(board);
         sc.close();
     }
 }

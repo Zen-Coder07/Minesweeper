@@ -4,26 +4,27 @@ public class GameUI {
         int rows = board.rows;
         int cols = board.cols;
 //  遍历输出
-        System.out.println("  ");
-        for(int j=1; j<=rows; j++){
-            System.out.print(j+" ");
+
+        System.out.print("  ");
+        for (int j = 1; j <= rows; j++) {
+            System.out.print(j + " ");
         }
         System.out.println();
-        for(int i=0; i<rows; i++){
-            System.out.print((i+1)+" ");
-            for(int j=0; j<cols; j++){
+        for (int i = 0; i < rows; i++) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < cols; j++) {
                 Cell cell = grid[i][j];
-                if(cell.isRevealed()){
-                    if(cell.isMine()){
+                if (cell.isRevealed()) {
+                    if (cell.isMine()) {
                         System.out.print("* ");
-                    }else if(cell.getAroundMineCount()==0){
+                    } else if (cell.getAroundMineCount() == 0) {
                         System.out.print("  ");
-                    }else {
-                        System.out.print(cell.getAroundMineCount()+" ");
+                    } else {
+                        System.out.print(cell.getAroundMineCount() + " ");
                     }
-                }else if(cell.isFlagged()){
-                    System.out.print("🚩 ");
-                }else{
+                } else if (cell.isFlagged()) {
+                    System.out.print("F ");
+                } else {
                     System.out.print("■ ");
                 }
             }
