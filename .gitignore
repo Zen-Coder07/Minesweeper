@@ -1,0 +1,20 @@
+# IDE配置文件，禁止提交
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# Java编译产物，禁止提交
+*.class
+bin/
+out/
+target/
+
+# 系统生成垃圾文件
+.DS_Store
+Thumbs.db
+
+# 日志、临时文件
+*.log
+*.tmp
+*.bak
