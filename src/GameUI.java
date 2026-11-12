@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 public class GameUI {
 
     public void renderBoard(GameBoard board){
@@ -7,7 +9,7 @@ public class GameUI {
 //  遍历输出
 
         System.out.print("  ");
-        for (int j = 1; j <= rows; j++) {
+        for (int j = 1; j <= cols; j++) {
             System.out.print(j + " ");
         }
         System.out.println();
@@ -35,6 +37,20 @@ public class GameUI {
         }
     }
 
+    //翻开插旗格子前的二次确认
+    public boolean confirmOpenFlag(Scanner sc){
+        System.out.println("当前格子为旗子，是否要掀开 yes/no");
+        while (true){
+            String choice = sc.nextLine().trim();
+            if (choice.equalsIgnoreCase("yes")) {
+                return true;
+            }
+            if (choice.equalsIgnoreCase("no")) {
+                return false;
+            }
+            System.out.println("请输入 yes 或 no");
+        }
+    }
 
     public void printHelp(){
         System.out.println("=====扫雷=====");

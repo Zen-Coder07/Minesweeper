@@ -1,7 +1,6 @@
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
-import java.util.Scanner;
 
 public class GameBoard {
     Cell[][] grid;
@@ -13,6 +12,12 @@ public class GameBoard {
     int safeNum;
     private final int[][] dirs = {{0,1},{0,-1},{1,0},{-1,0},{1,1},{-1,-1},{1,-1},{-1,1}};//8方向偏移，用于查雷数
     public GameBoard(int rows, int cols,int mineNum) {
+        if(rows <= 0 || cols <= 0){
+            throw new IllegalArgumentException("行列数必须大于 0");
+        }
+        if(mineNum < 0 || mineNum >= rows * cols){
+            throw new IllegalArgumentException("雷数必须在 0 ~ " + (rows * cols - 1) + " 之间");
+        }
         this.rows = rows;
         this.cols = cols;
         this.mineNum = mineNum;
@@ -67,61 +72,44 @@ public class GameBoard {
     //翻格子
     public void openCell(int r, int c){
         if(gameOver)return;
-        if(!inBounds(r,c))return;
+        if(!inBounds(r,c)){
+            System.out.println("坐标越界，请输入 1~" + rows + " 的行和 1~" + cols + " 的列");
+            return;
+        }
         Cell cell = grid[r][c];
+        if(cell.isRevealed()){
+            System.out.println("该盒子不能被重复掀开");
+            return;
+        }
+        if(cell.isFlagged()){
+            //插旗确认由 MinesweeperMain 通过 GameUI.confirmOpenFlag 处理
+            System.out.println("该格子已插旗，无法翻开");
+            return;
+        }
         if(isFirst){
             placeMine(r,c);
             isFirst = false;
         }
         if(cell.isMine()){
             gameOver=true;
-            System.out.print("  ");
-            for(int j=1; j<=rows; j++){
-                System.out.print(j+" ");
-            }
-            System.out.println();
-            for(int i=0; i<rows; i++){
-                System.out.print((i+1)+" ");
-                for(int j=0; j<cols; j++){
-                    cell = grid[i][j];
-
-                    if(cell.isMine()){
-                        System.out.print("💣");
-                    }else if(cell.getAroundMineCount()==0){
-                        System.out.print("  ");
-                    }else {
-                        int num = cell.getAroundMineCount();
-                        String Color = color.getColorByCount(num);
-                        System.out.print(Color + num + color.RESET + " ");
-                    }
-                }
-                System.out.println();
-            }
+            revealAllMines();
             System.out.println("Bong! 踩雷了！游戏结束");
             return;
         }
-        if (cell.isRevealed()) {
-            System.out.println("该盒子不能被重复掀开");
-            return;
-        }
-        if(cell.isFlagged()){
-            Scanner sc = new Scanner(System.in);
-            while (true) {
-                System.out.println("当前格子为旗子，是否要掀开 yes/no");
-                String choice = sc.nextLine();
-                if(choice.equals("yes")){
-                    BFS(r,c,cell);
-                    break;
-                }else if(choice.equals("no")){
-                    break;
-                }
-                else {
-                    continue;
+        BFS(r,c,cell);
+    }
+
+    //踩雷后揭开所有地雷
+    public void revealAllMines(){
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                if(grid[i][j].isMine()){
+                    grid[i][j].setRevealed();
                 }
             }
         }
-        BFS(r,c,cell);
     }
+
     protected void BFS(int r, int c,Cell cell){
         //BFS级联展开,用Queue
 
@@ -172,7 +160,10 @@ public class GameBoard {
 
     public void toggleFlag(int r, int c){
         if(gameOver)return;
-        if(!inBounds(r,c))return;
+        if(!inBounds(r,c)){
+            System.out.println("坐标越界，请输入 1~" + rows + " 的行和 1~" + cols + " 的列");
+            return;
+        }
         Cell cell = grid[r][c];
         if(cell.isRevealed()){
             System.out.println("已翻开的格子不能插旗");
@@ -180,9 +171,22 @@ public class GameBoard {
         }
         cell.setFlagged(!cell.isFlagged());
     }
+
+    //该位置是否已插旗
+    public boolean isFlagged(int r, int c){
+        return inBounds(r,c) && grid[r][c].isFlagged();
+    }
+
+    //取消该位置的旗子
+    public void clearFlag(int r, int c){
+        if(inBounds(r,c)){
+            grid[r][c].setFlagged(false);
+        }
+    }
+
     //检查是否胜利
     public boolean checkWin(){
-        return safeNum<0;
+        return safeNum<=0;
     }
     //是否输掉游戏
     public boolean isGameOver(){

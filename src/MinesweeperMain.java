@@ -11,14 +11,26 @@ public class MinesweeperMain {
             ui.renderBoard(board);
             System.out.print("输入指令：");
             try {
-                String line = sc.nextLine();
+                if (!sc.hasNextLine()) {
+                    break;
+                }
+                String line = sc.nextLine().trim();
                 String[] arr = line.split("\\s+");
                 if(arr.length==3) {
                     String op = arr[0];
                     int r = Integer.parseInt(arr[1]) - 1;
                     int c = Integer.parseInt(arr[2]) - 1;
                     if (op.equals("o") || op.equals("open")) {
-                        board.openCell(r, c);
+                        boolean shouldOpen = true;
+                        if (board.isFlagged(r, c)) {
+                            shouldOpen = ui.confirmOpenFlag(sc);
+                            if (shouldOpen) {
+                                board.clearFlag(r, c);
+                            }
+                        }
+                        if (shouldOpen) {
+                            board.openCell(r, c);
+                        }
                     } else if (op.equals("f") || op.equals("flag")) {
                         board.toggleFlag(r, c);
                     }
@@ -40,6 +52,7 @@ public class MinesweeperMain {
                 break;
             }
         }
+        ui.renderBoard(board);
         long end = System.currentTimeMillis();
         double cost = (end - start) / 1000.0;
         System.out.printf("本局耗时：%.2f 秒\n", cost);
